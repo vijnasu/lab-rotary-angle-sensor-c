@@ -40,59 +40,52 @@ Let's compare it with a program written using UPM.
 
 :arrow_forward: Create a new program.
 
-### Write the Code to Read the Temperature Sensor.
-
-Update <span class="icon file">temperature</span> to read the temperature sensor on program start up and log it to the console.
-
-1.  Include the following headers in your C program
-
-  	```c
-    #include <iostream>
-    #include <stdio.h>
-
-    #include "temperature.hpp"
-    #include "upm_utilities.h"
-    ```
-
-2.  Finally create a while loop that will continuously read the temperature value from sensor in celsius, convert it to fahrenheit and then display this on LCD by setting the cursor position and then writing the string. Also you can continuously change the LCD display color as done in the code.
-
-3.  The final code should look like this:
+### Write the Code to Read the Rotary Angle Sensor.
 
 ``` c
-#include <iostream>
-#include <stdio.h>
 
-#include "temperature.hpp"
+#include <iostream>
+#include <stdint.h>
+#include <stdio.h>
+#include <string>
+
+#include "groverotary.hpp"
 #include "upm_utilities.h"
 
 using namespace std;
 
-#define PLATFORM_OFFSET 512
-#define PIN 2 + PLATFORM_OFFSET
-
 int
 main()
 {
-  // Set the subplatform for the shield
-  mraa_add_subplatform(MRAA_GROVEPI, "0");
+    //! [Interesting]
+    // Instantiate a rotary sensor on analog pin A0
+    upm::GroveRotary knob(0);
 
-  // Create the temperature sensor object using AIO pin 0
-  upm::Temperature temp(PIN);
-  std::cout << temp.name() << std::endl;
+    // Print sensor name to confirm it initialized properly
+    cout << knob.name() << endl;
 
-  // Read the temperature ten times, printing both the Celsius and
-  // equivalent Fahrenheit temperature, waiting one second between readings
-  for (int i = 0; i < 10; i++) {
-      int celsius = temp.value();
-      int fahrenheit = (int) (celsius * 9.0 / 5.0 + 32.0);
-      printf("%d degrees Celsius, or %d degrees Fahrenheit\n", celsius, fahrenheit);
-      upm_delay(1);
-  }
+    while (true) {
+        float abs_value = knob.abs_value(); // Absolute raw value
+        float abs_deg = knob.abs_deg();     // Absolute degrees
+        float abs_rad = knob.abs_rad();     // Absolute radians
+        float rel_value = knob.rel_value(); // Relative raw value
+        float rel_deg = knob.rel_deg();     // Relative degrees
+        float rel_rad = knob.rel_rad();     // Relative radians
 
-  // Delete the temperature sensor object
-  //! [Interesting]
+        fprintf(stdout,
+                "Absolute: %4d raw %5.2f deg = %3.2f rad Relative: %4d raw %5.2f "
+                "deg %3.2f rad\n",
+                (int16_t) abs_value,
+                abs_deg,
+                abs_rad,
+                (int16_t) rel_value,
+                rel_deg,
+                rel_rad);
 
-  return 0;
+        upm_delay_us(2500000); // Sleep for 2.5s
+    }
+    //! [Interesting]
+    return 0;
 }
 ```
 
