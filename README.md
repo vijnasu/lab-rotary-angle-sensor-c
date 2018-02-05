@@ -15,7 +15,7 @@ Sensor | Pin
 --- | ---
 Rotary Angle Sensor | A0
 
-:arrow_forward: Connect **Grove Rotary Angle Sensor** to analog pin **A0** of the Grove Base Shield.
+![](./images/action.png) Connect **Grove Rotary Angle Sensor** to analog pin **A0** of the Grove Base Shield.
 
 ## Analog I/O using the Arduino API
 Create a new project
@@ -26,7 +26,7 @@ void setup() {
 }
 
 void loop() {
-  int sensorValue = analogRead(514);
+  int sensorValue = analogRead(512);
   DebugSerial.println(sensorValue);
   delay(100);
 }
